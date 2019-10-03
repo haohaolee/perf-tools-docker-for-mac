@@ -1,5 +1,5 @@
-# This Dockerfile extracts the source code and headers from a kernel package,
-# builds the perf utility, and places it into a scratch image
+# This Dockerfile extracts the source code and headers from linuxkit source image
+# and build the perf in a ubuntu image
 
 FROM linuxkit/kernel:4.9.184 AS ksrc
 
@@ -31,7 +31,8 @@ RUN echo deb http://archive.ubuntu.com/ubuntu/ eoan main restricted > /etc/apt/s
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 10
 
 RUN tar xf linux.tar.xz && tar xf kernel-headers.tar && tar xf kernel-dev.tar && \
-    cd /linux && make -C tools perf_install prefix=/opt/perf
+    cd /linux && make -C tools perf_install prefix=/opt/perf && \
+    rm -f /opt/perf/bin/trace && strip /opt/perf/bin/perf
 
 FROM quay.io/iovisor/kubectl-trace-bpftrace:HEAD
 
@@ -41,6 +42,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY --from=build /opt/perf/ /usr/local/
+RUN ln -s `which perf` /usr/local/bin/trace
+
 COPY --from=build /usr/src/ /usr/src/
 
 ADD entrypoint.sh /
