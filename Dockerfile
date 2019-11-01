@@ -1,7 +1,7 @@
 # This Dockerfile extracts the source code and headers from linuxkit source image
 # and build the perf in a ubuntu image
 
-ARG KERNEL_VERSION=4.9.184
+ARG KERNEL_VERSION=4.14.131
 FROM linuxkit/kernel:$KERNEL_VERSION AS ksrc
 
 FROM ubuntu:19.10 AS build
@@ -28,8 +28,7 @@ RUN echo deb http://archive.ubuntu.com/ubuntu/ eoan main restricted > /etc/apt/s
     echo deb-src http://security.ubuntu.com/ubuntu/ eoan-security universe >> /etc/apt/sources.list && \
     echo deb http://security.ubuntu.com/ubuntu/ eoan-security multiverse >> /etc/apt/sources.list && \
     echo deb-src http://security.ubuntu.com/ubuntu/ eoan-security multiverse >> /etc/apt/sources.list && \
-    apt-get update && env DEBIAN_FRONTEND=noninteractive apt-get build-dep -y linux-tools-common && apt-get install -y gcc-7 libiberty-dev binutils-dev systemtap-sdt-dev liblzma-dev && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 10
+    apt-get update && env DEBIAN_FRONTEND=noninteractive apt-get build-dep -y linux-tools-common && apt-get install -y libiberty-dev binutils-dev systemtap-sdt-dev liblzma-dev
 
 RUN tar xf linux.tar.xz && tar xf kernel-headers.tar && tar xf kernel-dev.tar && \
     cd /linux && make -C tools perf_install prefix=/opt/perf && \
