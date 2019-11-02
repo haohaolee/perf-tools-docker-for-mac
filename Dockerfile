@@ -40,7 +40,7 @@ RUN tar xf linux.tar.xz && tar xf kernel-headers.tar && tar xf kernel-dev.tar &&
 
 FROM ubuntu:19.10
 ARG bpftraceversion=0.9.2-1
-RUN apt-get update && apt-get install -y gawk bpftrace=${bpftraceversion} && \
+RUN apt-get update && apt-get install -y gawk libnuma1 binutils libpython2.7 libslang2 libunwind8 libdw1 bpftrace=${bpftraceversion} && \
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
 COPY --from=build /opt/perf/ /usr/local/
