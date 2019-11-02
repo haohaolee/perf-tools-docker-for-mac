@@ -31,7 +31,10 @@ RUN echo deb http://archive.ubuntu.com/ubuntu/ eoan main restricted > /etc/apt/s
     apt-get update && env DEBIAN_FRONTEND=noninteractive apt-get build-dep -y linux-tools-common && apt-get install -y gcc-8 libiberty-dev binutils-dev systemtap-sdt-dev liblzma-dev && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
 
+ADD patch/linux-001-backport-tools-remove-gettid.patch /patchfile
+
 RUN tar xf linux.tar.xz && tar xf kernel-headers.tar && tar xf kernel-dev.tar && \
+    patch -p1 < /patchfile && \
     cd /linux && make -C tools perf_install prefix=/opt/perf && \
     rm -f /opt/perf/bin/trace && strip /opt/perf/bin/perf
 
