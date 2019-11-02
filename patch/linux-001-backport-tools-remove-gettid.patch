@@ -1,16 +1,15 @@
-diff -uNr linux-new/tools/perf/jvmti/jvmti_agent.c linux/tools/perf/jvmti/jvmti_agent.c
---- linux-new/tools/perf/jvmti/jvmti_agent.c    2019-11-02 05:34:54.551490000 +0000
-+++ linux/tools/perf/jvmti/jvmti_agent.c        2019-11-02 05:53:37.258699000 +0000
-@@ -45,10 +45,10 @@
+diff -rupN linux/tools/perf/jvmti/jvmti_agent.c linux-new/tools/perf/jvmti/jvmti_agent.c
+--- linux/tools/perf/jvmti/jvmti_agent.c	2019-06-27 00:15:09.000000000 +0000
++++ linux-new/tools/perf/jvmti/jvmti_agent.c	2019-11-02 07:47:16.479535000 +0000
+@@ -45,11 +45,6 @@
  static char jit_path[PATH_MAX];
  static void *marker_addr;
-
+ 
 -static inline pid_t gettid(void)
-+/*static inline pid_t gettid(void)
- {
-        return (pid_t)syscall(__NR_gettid);
+-{
+-	return (pid_t)syscall(__NR_gettid);
 -}
-+}*/
-
+-
  static int get_e_machine(struct jitheader *hdr)
  {
+ 	ssize_t sret;

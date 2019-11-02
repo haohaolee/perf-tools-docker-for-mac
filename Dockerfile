@@ -34,8 +34,8 @@ RUN echo deb http://archive.ubuntu.com/ubuntu/ eoan main restricted > /etc/apt/s
 ADD patch/linux-001-backport-tools-remove-gettid.patch /patchfile
 
 RUN tar xf linux.tar.xz && tar xf kernel-headers.tar && tar xf kernel-dev.tar && \
-    patch -p1 < /patchfile && \
-    cd /linux && make -C tools perf_install prefix=/opt/perf && \
+    cd /linux && patch -p1 < /patchfile && \
+    make -C tools perf_install prefix=/opt/perf && \
     rm -f /opt/perf/bin/trace && strip /opt/perf/bin/perf
 
 FROM ubuntu:19.10 AS bpftrace
