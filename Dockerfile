@@ -36,9 +36,6 @@ RUN tar xf linux.tar.xz && tar xf kernel-headers.tar && tar xf kernel-dev.tar &&
     rm -f /opt/perf/bin/trace && strip /opt/perf/bin/perf
 
 FROM ubuntu:19.10
-ARG bpftraceversion=0.9.2-1
-RUN apt-get update && apt-get install -y gawk libnuma1 binutils libpython2.7 libslang2 libunwind8 libdw1 sysstat bpfcc-tools bpftrace=${bpftraceversion} && \
-    rm -rf /var/lib/apt/lists/* && apt-get clean
 
 COPY --from=build /opt/perf/ /usr/local/
 RUN ln -s `which perf` /usr/local/bin/trace
@@ -46,6 +43,10 @@ RUN ln -s `which perf` /usr/local/bin/trace
 COPY --from=build /usr/src/ /usr/src/
 
 ADD entrypoint.sh /
+
+ARG bpftraceversion=0.9.2-1
+RUN apt-get update && apt-get install -y gawk libnuma1 binutils libpython2.7 libslang2 libunwind8 libdw1 sysstat bpfcc-tools bpftrace=${bpftraceversion} && \
+    rm -rf /var/lib/apt/lists/* && apt-get clean
 
 ENTRYPOINT ["/entrypoint.sh"]
 
