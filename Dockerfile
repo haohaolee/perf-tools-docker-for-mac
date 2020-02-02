@@ -33,22 +33,20 @@ RUN echo deb http://archive.ubuntu.com/ubuntu/ eoan main restricted > /etc/apt/s
 
 ADD patch/linux-001-backport-tools-remove-gettid.patch /patchfile
 
-RUN tar xf linux.tar.xz && tar xf kernel-headers.tar && tar xf kernel-dev.tar && \
+RUN tar xf linux.tar.xz && \
     cd /linux && patch -p1 < /patchfile && \
     make -C tools perf_install prefix=/opt/perf && \
     rm -f /opt/perf/bin/trace && strip /opt/perf/bin/perf
 
-FROM ubuntu:19.10
+FROM ubuntu:20.04
 
 COPY --from=build /opt/perf/ /usr/local/
+COPY --from=build /usr/src/linux-headers-$KERNEL_VERSION-linuxkit /usr/src/
 RUN ln -s `which perf` /usr/local/bin/trace
-
-COPY --from=build /usr/src/ /usr/src/
 
 ADD entrypoint.sh /
 
-ARG bpftraceversion=0.9.2-1
-RUN apt-get update && apt-get install -y gawk libnuma1 binutils libpython2.7 libslang2 libunwind8 libdw1 sysstat bpfcc-tools bpftrace=${bpftraceversion} && \
+RUN apt-get update && apt-get install -y gawk libnuma1 binutils libpython2.7 libslang2 libunwind8 libdw1 sysstat bpfcc-tools bpftrace && \
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
 ENTRYPOINT ["/entrypoint.sh"]
