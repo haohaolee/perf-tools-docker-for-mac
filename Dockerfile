@@ -5,7 +5,7 @@ ARG KERNEL_VERSION=4.19.76
 FROM linuxkit/kernel:$KERNEL_VERSION AS ksrc
 
 FROM ubuntu:19.10 AS build
-
+ 
 COPY --from=ksrc /linux.tar.xz /kernel-headers.tar /kernel-dev.tar /
 
 RUN echo deb http://archive.ubuntu.com/ubuntu/ eoan main restricted > /etc/apt/sources.list && \
@@ -38,10 +38,17 @@ RUN tar xf linux.tar.xz && \
     make -C tools perf_install prefix=/opt/perf && \
     rm -f /opt/perf/bin/trace && strip /opt/perf/bin/perf
 
+
+FROM ubuntu:20.04 AS kheader
+COPY --from=ksrc /kernel-dev.tar /
+RUN cd / && tar xf kernel-dev.tar
+
 FROM ubuntu:20.04
+ARG KERNEL_VERSION
+ENV KERNEL_VERSION=$KERNEL_VERSION
 
 COPY --from=build /opt/perf/ /usr/local/
-COPY --from=build /usr/src/linux-headers-$KERNEL_VERSION-linuxkit /usr/src/
+COPY --from=kheader /usr/src /usr/src/
 RUN ln -s `which perf` /usr/local/bin/trace
 
 ADD entrypoint.sh /
