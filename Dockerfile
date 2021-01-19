@@ -1,7 +1,7 @@
 # This Dockerfile extracts the source code and headers from linuxkit source image
 # and build the perf in a ubuntu image
 
-ARG KERNEL_VERSION=4.19.76
+ARG KERNEL_VERSION=4.19.121
 FROM linuxkit/kernel:$KERNEL_VERSION AS ksrc
 
 FROM ubuntu:19.10 AS build
